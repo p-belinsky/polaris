@@ -17,6 +17,7 @@ const plexMono = IBM_Plex_Mono({
 export const metadata: Metadata = {
     title: "Polaris",
     description: "AI-powered code editor",
+    icons: "/logo.svg"
 };
 
 export default function RootLayout({children}: Readonly<{ children: React.ReactNode; }>) {
