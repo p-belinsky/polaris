@@ -55,7 +55,7 @@ export const getById = query({
     handler: async (ctx, args) => {
         const identity = await verifyAuth(ctx);
 
-        const project = await ctx.db.get('projects', args.id);
+        const project = await ctx.db.get(args.id);
 
         if(!project){
             throw new Error("Project not found");
@@ -76,7 +76,7 @@ export const rename = mutation({
     handler: async (ctx, args) => {
         const identity = await verifyAuth(ctx);
 
-        const project = await ctx.db.get('projects', args.id);
+        const project = await ctx.db.get(args.id);
 
         if(!project){
             throw new Error("Project not found");
@@ -85,7 +85,7 @@ export const rename = mutation({
         if(project.ownerId !== identity.subject){
             throw new Error("Unauthorized access to this project")
         }
-        await ctx.db.patch("projects", args.id, {
+        await ctx.db.patch(args.id, {
             name: args.name,
             updatedAt: Date.now(),
         })
