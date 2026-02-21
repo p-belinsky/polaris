@@ -15,6 +15,7 @@ import {LoadingRow} from "@/features/projects/components/file-explorer/loading-r
 import {getItemPadding} from "@/features/projects/components/file-explorer/constants";
 import {CreateInput} from "@/features/projects/components/file-explorer/create-input";
 import {RenameInput} from "@/features/projects/components/file-explorer/rename-input";
+import {useEditor} from "@/features/editor/hooks/use-editor";
 
 const Tree = ({
     item, level = 0, projectId
@@ -32,6 +33,8 @@ const Tree = ({
     const deleteFile = useDeleteFile();
     const createFile = useCreateFile();
     const createFolder = useCreateFolder();
+
+    const { openFile, closeTab, activeTabId } = useEditor(projectId)
 
     const folderContents = useFolderContents({projectId, parentId: item._id, enabled: item.type === "folder" && isOpen});
 
@@ -70,6 +73,9 @@ const Tree = ({
 
     if(item.type === "file"){
         const fileName = item.name;
+        const isActive = activeTabId === item._id;
+
+
         if(isRenaming){
             return (
                 <RenameInput type="file" defaultValue={fileName} level={level} onSubmit={handleRename} onCancel={()=>setIsRenaming(false)}/>
@@ -79,11 +85,12 @@ const Tree = ({
             <TreeItemWrapper
                 item={item}
                 level={level}
-                isActive={false}
-                onClick={()=> {}}
-                onDoubleClick={()=>{}}
+                isActive={isActive}
+                onClick={()=> openFile(item._id, {pinned:false})}
+                onDoubleClick={()=> openFile(item._id, {pinned:true})}
                 onRename={()=>{setIsRenaming(true)}}
                 onDelete={()=> {
+                    closeTab(item._id);
                     deleteFile ({ id: item._id })
                 }}
             >
